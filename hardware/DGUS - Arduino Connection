@@ -1,0 +1,16 @@
+Wiring Diagram
+Connections
+
+HMI VCC → 5V (Arduino)
+HMI GND → GND (Arduino)
+HMI TXD → Digital Pin 2 (Arduino)
+HMI RXD → Digital Pin 3 (Arduino)
+
+Designing the HMI Interface
+DGUS Software:
+To create a user interface on the DWIN HMI, use the DGUS Software provided by DWIN. This tool allows for designing interactive touch interfaces without extensive programming.
+
+Steps:
+Download and install the DGUS Software.
+Design the desired interface, incorporating buttons, displays, and other UI elements.
+Save the project and transfer it to the HMI via the appropriate method (e.g., SD card).
