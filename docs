@@ -1,0 +1,151 @@
+Electric Vehicle Dashboard – Documentation & Setup Guide
+  
+An advanced, real-time dashboard for electric vehicles using the DGUS 7V647 HMI and Arduino Uno (ATmega328P).
+Features GPS speed tracking, battery monitoring, and relay-controlled LED operation.
+
+🚀 Features
+✅ Real-time Speed Display – Captures GPS speed and displays it in km/h.
+✅ Battery Monitoring – Converts voltage levels to percentage and alerts low battery.
+✅ Distance Tracking – Displays total distance traveled using GPS data.
+✅ Relay-Controlled LED – Controls an LED from the DGUS HMI touchscreen.
+✅ High-Speed Communication – Uses hardware serial communication between Arduino Uno and DGUS HMI for fast data transfer.
+✅ Smooth Data Filtering – Implements signal filtering for stable speed and battery readings.
+
+🛠️ Hardware Requirements
+Arduino Uno (ATmega328P)
+DGUS 7V647 HMI (7-inch display)
+Ublox NEO-M8N GPS Module
+Relay Module
+LED
+Battery (56V)
+Voltage Divider Circuit (for battery level monitoring)
+Jumpers & Connecting Wires
+  
+📌 Circuit Connections
+  
+1️⃣ GPS Module → Arduino
+GPS Pin	Arduino Pin
+TX	RX (Pin 0)
+RX	TX (Pin 1)
+GND	GND
+VCC	5V
+  
+2️⃣ Battery Monitoring (Voltage Divider)
+Battery Pin	Resistor	Arduino Pin
++56V	R1	A0 (Analog)
+A0	R2	GND
+GND	—	GND
+Used Voltage Divider Formula
+
+3️⃣ Relay-Controlled LED
+Relay Pin	Arduino Pin
+IN	D5
+GND	GND
+VCC	5V
+  
+4️⃣ DGUS HMI → Arduino
+DGUS HMI Pin	Arduino Pin
+TX	RX (Pin 0)
+RX	TX (Pin 1)
+GND	GND
+5V	5V
+  
+📌 Software Installation & Setup
+1️⃣ Install Arduino IDE
+Download & install Arduino IDE.
+
+2️⃣ Install Required Libraries
+Go to Arduino IDE → Sketch → Include Library → Manage Libraries and install:
+
+TinyGPS++ (for GPS parsing)
+SoftwareSerial (if using a secondary serial communication)
+
+arduino code
+#include <TinyGPS++.h>
+#include <SoftwareSerial.h>
+  
+3️⃣ Upload Code to Arduino
+Open EV_Dashboard.ino
+Select Board: Arduino Uno
+Select Port
+Click Upload ✅
+  
+📌 DGUS HMI Setup
+1️⃣ Setup DGUS UI
+Use DGUS Tool Software to configure display UI.
+  
+Create variables for:
+Speed (km/h)
+Distance (km)
+Battery Level (%)
+LED Control (ON/OFF)
+  
+2️⃣ Upload UI to DGUS HMI
+Copy UI files to a formatted SD card.
+Insert the SD card into the DGUS HMI.
+Power on the HMI to update UI.
+  
+📌 Code Explanation
+1️⃣ GPS Speed Calculation
+
+  arduino 
+
+TinyGPSPlus gps;
+void loop() {
+  if (gps.speed.kmph() > 0) {
+    sendToHMI(0x0053, gps.speed.kmph()); // Send speed data
+  }
+}
+Captures speed in km/h.
+Sends speed data to DGUS HMI variable 0x1001.
+  
+2️⃣ Battery Percentage Calculation
+  
+arduino
+  
+float readBattery() {
+  float voltage = analogRead(A0) * (56.0 / 1023.0);
+  return map(voltage, 46, 56, 0, 100); // Convert to percentage
+}
+Reads analog voltage.
+Maps voltage (46V–56V) → percentage (0%–100%).
+  
+3️⃣ Distance Calculation
+  
+arduino
+  
+float distanceKm = gps.distanceBetween(lat1, lon1, lat2, lon2) / 1000.0;
+sendToHMI(0x1003, distanceKm);
+Uses GPS latitude/longitude to calculate distance in km.
+  
+4️⃣ Relay-Controlled LED
+  
+arduino
+  
+void controlRelay(bool state) {
+  digitalWrite(5, state ? HIGH : LOW);
+}
+Receives command from HMI to turn LED ON/OFF.
+📌 Testing & Debugging
+  
+1️⃣ Serial Monitor
+Open Arduino IDE → Serial Monitor
+Set baud rate to 9600
+Check GPS speed, battery %, and LED status.
+  
+2️⃣ DGUS HMI Debugging
+Use DGUS Debug Mode to verify data reception.
+  
+License
+This project is MIT Licensed.
+You are free to use, modify, and distribute with attribution.
+
+Contributions are welcome!
+
+Fork this repository 🍴
+Create a feature branch 🌿
+
+📌 Contact
+📧 Email: jesusinatoluwanimi@gmail.com
+🔗 GitHub: JToluwanimi
+🌐 LinkedIn: https://www.linkedin.com/in/toluwanimi-jesusina-30b547241?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
